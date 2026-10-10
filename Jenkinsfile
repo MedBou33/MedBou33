@@ -2,14 +2,24 @@ pipeline {
     agent any
 
     stages {
-        stage('Hello') {
+        stage('Format'){
             steps {
-                echo 'Pipeline is running'
+                sh 'test -z "$(gofmt -l .)"'
             }
         }
-        stage('List files') {
+        stage('Vet') {
             steps {
-                sh 'ls -la'
+                sh 'go vet ./...'
+            }
+        }
+        stage('Test') {
+            steps {
+                sh 'go test -v ./...'
+            }
+        }
+        stage('Build'){
+            steps {
+                sh 'go build -o bin/app .'
             }
         }
     }
